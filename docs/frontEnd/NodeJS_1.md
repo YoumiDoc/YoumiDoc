@@ -1,5 +1,5 @@
 ---
-title: NodeJS【工程化】
+title: NodeJS
 order: 1
 group:
   title: 工程化篇

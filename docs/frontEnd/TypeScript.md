@@ -1,6 +1,6 @@
 ---
 title: TypeScript
-order: 10
+order: 20
 group:
   title: 进阶篇
   order: 40
