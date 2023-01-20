@@ -5,7 +5,8 @@
     "esModuleInterop": true,
     "baseUrl": "./",
     "paths": {
-      "@@/*": [".dumi/tmp/*"]
+      "@@/*": [".dumi/tmp/*"],
+      "@src/*": ["src/*"]
     }
   },
   "include": [".dumi/**/*", ".dumirc.ts"]

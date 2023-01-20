@@ -1,9 +1,12 @@
 # Youmi
-柚米编程学习开源文档，只为人人有米，
+柚米文档，只为人人有米，
 
 ## Development
+先下载NodeJS, 一键安装即可: (NodeJS)[https://nodejs.org/en/]
 
 ```bash
+# install pnpm
+npm i pnpm -g
 # install dependencies
 $ pnpm install
 
@@ -15,5 +18,4 @@ $ pnpm run build
 ```
 
 ## LICENSE
-
 MIT
