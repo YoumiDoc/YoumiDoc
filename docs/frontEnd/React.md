@@ -6,16 +6,17 @@ group:
 ---
 
 ## React
+React是一个用于构建用户界面的 JavaScript 库.
 
 为什么选择 React?
 
-因为 React 是 Facebook 团队开发的，高效可靠且，并且提倡 All in JavaScript.
+因为 React 是 Facebook 团队开发的,高效可靠且,并且提倡 All in JavaScript.
 
-本文旨在速通，深入还需进一步学习.
+> 本文旨在零基础速通,深入还需进一步学习.
 
 ### JSX
 
-React 的遵循`All in JS`的理念，是像这样利用虚拟 DOM 来创建真实 DOM 的：
+React 的遵循`All in JS`的理念,是像这样利用虚拟 DOM 来创建真实 DOM 的：
 
 ```jsx | pure
 React.createElement(
@@ -35,7 +36,7 @@ React.createElement(
 );
 ```
 
-然而上面的`createElement`太麻烦且抽象了，所以就诞生了 JSX 这种更直观的写法：
+然而上面的`createElement`太麻烦且抽象了,所以就诞生了 JSX 这种更直观的写法：
 
 ```jsx | pure
 <ComponentA attr1="A" attr2={0}>
@@ -51,11 +52,11 @@ React.createElement(
 
 > 1. 标签的 class 需要写作 className
 > 2. 需要有一个最外层元素包裹, 可以用`<></>`包裹避免多余的渲染
-> 3. 通过{}包裹 js 的内容进行动态解析，如注释`{/* 我是注释内容 */}`
-> 4. React 重写了 JS 的事件系统，改用小驼峰写法，像 onClick 这样，并且 React 会将事件自动处理成事件委派模式
-> 5. 绑定事件时，加括号会导致在解析时直接调用
+> 3. 通过{}包裹 js 的内容进行动态解析,如注释`{/* 我是注释内容 */}`
+> 4. React 重写了 JS 的事件系统,改用小驼峰写法,像 onClick 这样,并且 React 会将事件自动处理成事件委派模式
+> 5. 绑定事件时,加括号会导致在解析时直接调用
 
-经常使用的话，自然也就熟悉了.
+经常使用的话,自然也就熟悉了.
 
 可以试着用`create-react-app`快速构建一个React项目, 然后敲一下示例demo：
 
@@ -79,7 +80,7 @@ export default () => {
   const style = { backgroundColor: '#royalblue', color: 'pink' };
   return (
     <>
-      {/*记得注释要写花括号，因为这算是JS代码的注释*/}
+      {/*记得注释要写花括号,因为这算是JS代码的注释*/}
       <h2 className="title">{name}</h2>
       <a style={style} href={site}>
         这是一个有颜色的链接
@@ -101,11 +102,11 @@ export default () => {
 
 ### 组件
 
-上述示例 Demo 中已经出现过了，这里就简单提一下
+上述示例 Demo 中已经出现过了,这里就简单提一下
 
 #### 类组件
 
-React 16 之前常采用类组件(Class)，大概长下面这样:
+React 16 之前常采用类组件(Class),大概长下面这样:
 
 ```jsx | pure
 import React from 'react';
@@ -126,7 +127,7 @@ class Welcome extends React.Component {
 // 使用组件时,直接当作标签来写即可: <Welcome></Welcome>;
 ```
 
-但是由于其`this`常常让开发者感到迷惑，`extends`在实际开发时基本没用过，更多时候是用 组合 而不是 继承
+但是由于其`this`常常让开发者感到迷惑,`extends`在实际开发时基本没用过,更多时候是用 组合 而不是 继承
 
 所以后来开始采用 函数组件 (Function), 本文档之后的内容也以函数组件为主
 
@@ -144,9 +145,9 @@ function Welcome() {
 // 使用时: <Welcome></Welcome>
 ```
 
-但是有个问题，原生 JS 的函数是无**状态**且无**生命周期**的, 状态可以理解为数据，无状态即函数执行完成后，内部声明的变量等数据也不再存在
+但是有个问题,原生 JS 的函数是无**状态**且无**生命周期**的, 状态可以理解为数据,无状态即函数执行完成后,内部声明的变量等数据也不再存在
 
-为了解决这个问题，就引入了 Hooks
+为了解决这个问题,就引入了 Hooks
 
 ### Hooks
 
@@ -154,14 +155,17 @@ function Welcome() {
 
 #### useState
 
-字面意思
-最常用的 Hook, 直接来看看使用情景:
+最常用的 Hook, 能让函数组件拥有状态, 当这些状态发生更改时, 默认情况下该组件及其所有子组件都会发生重新渲染.
+
+状态是否发生更改的标准, 遵循JS的`===`比较规则.
+
+来看看实际代码:
 
 ```jsx
 import React, { useState } from 'react';
 
 const Count = () => {
-  // const [响应式变量, 处理这个变量的函数] = useState(初始值);
+  // const [响应式变量, 处理这个变量的函数(dispatch)] = useState(初始值);
   const [count, setCount] = useState(0);
   return (
     <div>
@@ -197,6 +201,52 @@ export default () => {
     </>
   );
 };
+```
+
+组件在不同生命周期使用同名Hook并非同一个函数, 比如首次渲染挂载时 `useState`调用的是`mountState`方法, 而状态更新时调用的则是`updateState`方法.
+
+这意味着初始化值的逻辑只会执行一次.
+
+而我们也知道, 数组对象等内部数据越多则开销越大, 但函数声明的开销和其内的代码量无关, 所以在初始化值为复杂数据或复杂计算时, 我们可以这样优化：
+
+```jsx | pure
+const [data1, setData1] = useState(() => complexData);
+const [data2, setData2] = useState(() => complexCompute);
+```
+
+另外, `useState`在将要更新时, 底层会开始维护一个队列, 等到开始更新时, 会在处理完这个队列后才进行赋值.
+
+这听起来有些抽象, 结合下面的代码看看应该就能够理解了:
+```jsx
+import { useState } from 'react';
+
+export default () => {
+  const [value1, setValue1] = useState(0);
+  const [value2, setValue2] = useState(0);
+  
+  const add1 = () => {
+    setValue(value1 + 1); // value为0, 将计算结果1放入队列, value本身不更新仍然为0
+    setValue(value1 + 1); // 同上
+    setValue(value1 + 1); // 同上
+    // 完成, 将队列末尾的结果赋值给value, value = 1
+  };
+
+  const add2 = () => {
+    setValue(value2 + 1);
+    setValue(preValue => preValue + 1); // 回调能拿到 本次更新 在队列中的前一个更新的结果
+    setValue(preValue => preValue + 1); 
+  };
+
+  return (
+    <>
+      <div>点一次触发三个+1:</div>
+      <button onClick={add1}>+3?: {value1}</button>
+      <hr />
+      <div>解决方法:</div>
+      <button onClick={add2}>+3!: {value2}</button>
+    </>
+  )
+}
 ```
 
 #### useEffect
@@ -378,7 +428,7 @@ export default () => {
 
 #### Hook 使用规范
 
-只在当前组件的作用域最顶层使用 Hook，不要在循环、条件语句、函数等次级作用域中使用，如果必须要有条件语句等，那么可以考虑将其放到 effect 内部
+只在当前组件的作用域最顶层使用 Hook,不要在循环、条件语句、函数等次级作用域中使用,如果必须要有条件语句等,那么可以考虑将其放到 effect 内部
 
 ```jsx | pure
 useEffect(function persistForm() {
@@ -390,7 +440,7 @@ useEffect(function persistForm() {
 ```
 
 为什么不可以把 Hook 放到循环, 条件等语句中呢?
-因为 Hook 底层是用一个不具名节点链表来维护执行顺序的, 所以其执行顺序必须被严格保证
+因为 Hook 底层是用一个不具名节点链表来维护执行顺序的, 所以其执行顺序必须被严格保证.
 
 ### 组件通信
 
@@ -480,3 +530,7 @@ const Parent = () => {
 
 export default Parent;
 ```
+
+### 继续学习
+[React官网](https://reactjs.org/)
+[React技术揭秘](https://react.iamkasong.com/hooks/prepare.html)

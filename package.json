@@ -1,7 +1,7 @@
 {
   "name": "Youmi",
   "version": "0.0.1",
-  "description": "Every Will Youmi",
+  "description": "Everyone Will Youmi",
   "scripts": {
     "start": "npm run dev",
     "dev": "dumi dev",
