@@ -5,7 +5,8 @@ group:
   title: 工程化篇
 ---
 
-## React
+## 简介
+
 React是一个用于构建用户界面的 JavaScript 库.
 
 为什么选择 React?
@@ -14,7 +15,7 @@ React是一个用于构建用户界面的 JavaScript 库.
 
 > 本文旨在零基础速通,深入还需进一步学习.
 
-### JSX
+## JSX
 
 React 的遵循`All in JS`的理念,是像这样利用虚拟 DOM 来创建真实 DOM 的：
 
@@ -100,11 +101,11 @@ export default () => {
 };
 ```
 
-### 组件
+## 组件
 
 上述示例 Demo 中已经出现过了,这里就简单提一下
 
-#### 类组件
+### 类组件
 
 React 16 之前常采用类组件(Class),大概长下面这样:
 
@@ -133,7 +134,7 @@ class Welcome extends React.Component {
 
 如果想体验一下用类组件开发, 那么可以参考: [React 官方教程](https://react.docschina.org/tutorial/tutorial.html)
 
-#### 函数组件
+### 函数组件
 
 普通函数和箭头函数都是可以的
 
@@ -149,11 +150,11 @@ function Welcome() {
 
 为了解决这个问题,就引入了 Hooks
 
-### Hooks
+## Hooks
 
 是一些名称以`use`开头的特殊函数
 
-#### useState
+### useState
 
 最常用的 Hook, 能让函数组件拥有状态, 当这些状态发生更改时, 默认情况下该组件及其所有子组件都会发生重新渲染.
 
@@ -225,16 +226,16 @@ export default () => {
   const [value2, setValue2] = useState(0);
   
   const add1 = () => {
-    setValue(value1 + 1); // value为0, 将计算结果1放入队列, value本身不更新仍然为0
-    setValue(value1 + 1); // 同上
-    setValue(value1 + 1); // 同上
+    setValue1(value1 + 1); // value为0, 将计算结果1放入队列, value本身不更新仍然为0
+    setValue1(value1 + 1); // 同上
+    setValue1(value1 + 1); // 同上
     // 完成, 将队列末尾的结果赋值给value, value = 1
   };
 
   const add2 = () => {
-    setValue(value2 + 1);
-    setValue(preValue => preValue + 1); // 回调能拿到 本次更新 在队列中的前一个更新的结果
-    setValue(preValue => preValue + 1); 
+    setValue2(value2 + 1);
+    setValue2(preValue => preValue + 1); // 回调能拿到 本次更新 在队列中的前一个更新的结果
+    setValue2(preValue => preValue + 1); 
   };
 
   return (
@@ -249,7 +250,7 @@ export default () => {
 }
 ```
 
-#### useEffect
+### useEffect
 
 可以为函数组件提供三个生命周期
 `mounted`, `updated` 和 `unmounted`
@@ -284,7 +285,7 @@ export default () => {
 };
 ```
 
-#### useMemo
+### useMemo
 
 memo 即 memory, 能够将函数的计算结果缓存, 使用的场景便是缓存开销较大的计算:
 这是加上 useMemo 的:
@@ -350,7 +351,7 @@ export default () => {
 };
 ```
 
-#### useCallback
+### useCallback
 
 与`useMemo`类似, 但是专门用于缓存函数.
 
@@ -388,9 +389,9 @@ export default () => {
 };
 ```
 
-#### useRef
+### useRef
 
-可以理解为, 获取到一个元素对应的 DOM 节点:
+最基本的用处是, 获取到一个元素对应的 DOM 节点:
 
 ```jsx
 import { useState, useRef } from 'react';
@@ -401,8 +402,8 @@ export default () => {
 
   const onScroll = () => {
     if (scrollRef?.current) {
-      let scrollTop = scrollRef?.current.scrollTop; //滚动条滚动高度
-      setScrollTop(scrollTop);
+      // 访问DOM节点获取滚动条滚动高度
+      setScrollTop(scrollRef?.current.scrollTop);
     }
   };
 
@@ -424,9 +425,20 @@ export default () => {
 };
 ```
 
+还有另外一个用处是, 可以像`useState`一样维护状态, 并且总能及时拿到最新的值, 但是更改它的值不会引起重新渲染, 所以在不需要对视图做更改的时候可以考虑使用`useRef`:
+
+```jsx | pure
+const stateRef = useRef(1);
+// 使用stageRef.current即可访问
+
+// 像使用一般变量一样更新数据:
+stateRef.current = 2;
+```
+
+
 更多 Hook 建议查阅官方文档做进一步学习
 
-#### Hook 使用规范
+# Hook 使用规范
 
 只在当前组件的作用域最顶层使用 Hook,不要在循环、条件语句、函数等次级作用域中使用,如果必须要有条件语句等,那么可以考虑将其放到 effect 内部
 
@@ -442,7 +454,7 @@ useEffect(function persistForm() {
 为什么不可以把 Hook 放到循环, 条件等语句中呢?
 因为 Hook 底层是用一个不具名节点链表来维护执行顺序的, 所以其执行顺序必须被严格保证.
 
-### 组件通信
+## 组件通信
 
 通过阅读了上述章节的代码, 就应该已经了解到其中几种方式了.
 React 本身提供的方式有:
@@ -450,7 +462,7 @@ React 本身提供的方式有:
 - props 参数透传(父子间通信)
 - Context/Provider(跨组件通信)
 
-#### props 参数透传
+### props 参数透传
 
 通过参数传递, 可以让父级向子级传递数据.
 如果这个参数是一个能修改父级状态的函数, 那么就能让子级向父级传递数据.
@@ -481,7 +493,7 @@ export default () => {
 };
 ```
 
-#### Context/Provider
+### Context/Provider
 
 `Context`是一个"传送门", 通向的"异世界"`Provider`
 
@@ -531,6 +543,6 @@ const Parent = () => {
 export default Parent;
 ```
 
-### 继续学习
+## 继续学习
 [React官网](https://reactjs.org/)
 [React技术揭秘](https://react.iamkasong.com/hooks/prepare.html)
