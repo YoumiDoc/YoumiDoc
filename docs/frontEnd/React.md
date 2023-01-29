@@ -70,7 +70,6 @@ React.createElement(
 
 ```jsx
 import React from 'react';
-import { render } from 'react-dom';
 
 const YoumiComponent = () => {
   return (
