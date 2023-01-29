@@ -15,6 +15,13 @@ React是一个用于构建用户界面的 JavaScript 库.
 
 > 本文旨在零基础速通,深入还需进一步学习.
 
+快速开始:
+
+```bash
+npm i create-react-app -g
+create-react-app project-name
+```
+
 ## JSX
 
 React 的遵循`All in JS`的理念,是像这样利用虚拟 DOM 来创建真实 DOM 的：
