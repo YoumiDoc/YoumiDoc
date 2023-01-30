@@ -7,7 +7,7 @@ group:
 
 ## 简介
 
-React是一个用于构建用户界面的 JavaScript 库.
+React 是一个用于构建用户界面的 JavaScript 库.
 
 为什么选择 React?
 
@@ -66,7 +66,7 @@ React.createElement(
 
 经常使用的话,自然也就熟悉了.
 
-可以试着用`create-react-app`快速构建一个React项目, 然后敲一下示例demo：
+可以试着用`create-react-app`快速构建一个 React 项目, 然后敲一下示例 demo：
 
 ```jsx
 import React from 'react';
@@ -106,6 +106,9 @@ export default () => {
   );
 };
 ```
+
+当然, 循环渲染时记得给标签加上`key`属性以便于底层进行`diff`算法.
+**在保证元素下标不变时**, 可以使用下标作为`key`属性的值, 通常会比选择其他值更快.
 
 ## 组件
 
@@ -164,7 +167,7 @@ function Welcome() {
 
 最常用的 Hook, 能让函数组件拥有状态, 当这些状态发生更改时, 默认情况下该组件及其所有子组件都会发生重新渲染.
 
-状态是否发生更改的标准, 遵循JS的`===`比较规则.
+状态是否发生更改的标准, 遵循 JS 的`===`比较规则.
 
 来看看实际代码:
 
@@ -188,13 +191,11 @@ const Input = () => {
   return (
     <div>
       <hr />
-      <div>受控组件示例</div>
-      <input
-        onChange={(e) => {
-          setStr(e.target.value);
-        }}
-      />
-      <div>被控制的部分:</div>
+      <h3>受控组件示例</h3>
+
+      <div>非受控的部分, 即施加控制的一方:</div>
+      <input onChange={(e) => {setStr(e.target.value);}}/>
+      <div>受控的部分, 即状态被控制的一方:</div>
       <input value={str} />
     </div>
   );
@@ -210,38 +211,43 @@ export default () => {
 };
 ```
 
-组件在不同生命周期使用同名Hook并非同一个函数, 比如首次渲染挂载时 `useState`调用的是`mountState`方法, 而状态更新时调用的则是`updateState`方法.
+组件在不同生命周期使用同名 Hook 并非同一个函数, 比如首次渲染挂载时的`useState`调用的是底层的`mountState`方法, 而状态更新时的`useState`调用的则是底层的`updateState`方法.
 
 这意味着初始化值的逻辑只会执行一次.
 
-而我们也知道, 数组对象等内部数据越多则开销越大, 但函数声明的开销和其内的代码量无关, 所以在初始化值为复杂数据或复杂计算时, 我们可以这样优化：
+同时我们也知道, 数组对象等内部数据越多则开销越大, 但函数声明的开销和其内的代码量无关, 所以在初始化值为复杂数据或复杂计算时, 我们可以这样优化：
 
 ```jsx | pure
+// 优化前：
+const [data1, setData1] = useState(complexData);
+// 优化后：
 const [data1, setData1] = useState(() => complexData);
-const [data2, setData2] = useState(() => complexCompute);
 ```
 
-另外, `useState`在将要更新时, 底层会开始维护一个队列, 等到开始更新时, 会在处理完这个队列后才进行赋值.
+再次强调, 只有在数据比较复杂时才需要写作函数的返回值。
+因为函数会占用堆内存, 所以在处理简单数据时也这么做就会得不偿失！
 
+另外, `useState`在 将要 更新时, 底层会开始维护一个更新队列, 等到 执行 更新时, 底层会在处理完这个队列后才进行赋值.
 这听起来有些抽象, 结合下面的代码看看应该就能够理解了:
+
 ```jsx
 import { useState } from 'react';
 
 export default () => {
   const [value1, setValue1] = useState(0);
   const [value2, setValue2] = useState(0);
-  
+
   const add1 = () => {
-    setValue1(value1 + 1); // value为0, 将计算结果1放入队列, value本身不更新仍然为0
+    setValue1(value1 + 1); // value为0, 将value + 1计算结果1放入队列, value本身不更新仍然为0
+    setValue1(value1 + 1); // value还是0, 重复上述过程
     setValue1(value1 + 1); // 同上
-    setValue1(value1 + 1); // 同上
-    // 完成, 将队列末尾的结果赋值给value, value = 1
+    // 处理完成, 将队列末尾的结果赋值给value, value = 1
   };
 
   const add2 = () => {
     setValue2(value2 + 1);
-    setValue2(preValue => preValue + 1); // 回调能拿到 本次更新 在队列中的前一个更新的结果
-    setValue2(preValue => preValue + 1); 
+    setValue2((preValue) => preValue + 1); // 回调能拿到 本次更新 在更新队列中的 前一个更新 的结果
+    setValue2((preValue) => preValue + 1);
   };
 
   return (
@@ -252,13 +258,13 @@ export default () => {
       <div>解决方法:</div>
       <button onClick={add2}>+3!: {value2}</button>
     </>
-  )
-}
+  );
+};
 ```
 
 ### useEffect
 
-可以为函数组件提供三个生命周期
+可以为函数组件提供三个生命周期:
 `mounted`, `updated` 和 `unmounted`
 
 下面是一些常见的写法:
@@ -308,7 +314,6 @@ const expCalculate = (limit) => {
 };
 
 export default () => {
-  const [state, setState] = useState(0);
   const [value, setValue] = useState(0);
   // 加了useMemo, 监听内容为空表示任何情况都直接复用上次的计算结果
   // 可以根据需求自行指定监听内容
@@ -317,7 +322,6 @@ export default () => {
     <button
       onClick={() => {
         setValue(value + 1);
-        setState(state + 1);
       }}
     >
       重新渲染 {value}
@@ -395,6 +399,8 @@ export default () => {
 };
 ```
 
+同样地, `React.memo`默认使用浅比较, 你可以在其第二个参数位传入一个回调, 回调会接收到两个参数——上一次的`props`和本次的`props`, 再根据具体情况返回布尔值表示比较结果是否相同, 进而对缓存行为进行调控。
+
 ### useRef
 
 最基本的用处是, 获取到一个元素对应的 DOM 节点:
@@ -441,10 +447,9 @@ const stateRef = useRef(1);
 stateRef.current = 2;
 ```
 
-
 更多 Hook 建议查阅官方文档做进一步学习
 
-# Hook 使用规范
+### Hook 使用规范
 
 只在当前组件的作用域最顶层使用 Hook,不要在循环、条件语句、函数等次级作用域中使用,如果必须要有条件语句等,那么可以考虑将其放到 effect 内部
 
@@ -465,10 +470,10 @@ useEffect(function persistForm() {
 通过阅读了上述章节的代码, 就应该已经了解到其中几种方式了.
 React 本身提供的方式有:
 
-- props 参数透传(父子间通信)
+- props, child(父子间通信)
 - Context/Provider(跨组件通信)
 
-### props 参数透传
+### props
 
 通过参数传递, 可以让父级向子级传递数据.
 如果这个参数是一个能修改父级状态的函数, 那么就能让子级向父级传递数据.
@@ -478,11 +483,15 @@ import { useState } from 'react';
 
 const Child = (props) => {
   const { parentState, setParentState } = props;
+  const style = { border: '1px solid red' };
+
   return (
-    <div>
+    <div style={style}>
       <button onClick={() => setParentState(parentState + 1)}>
         子级组件的按钮
       </button>
+      {/* 访问组件嵌套形式传递的数据 */}
+      {props.children}
     </div>
   );
 };
@@ -492,8 +501,11 @@ export default () => {
   return (
     <div>
       <div>父级组件的状态: {state}</div>
-      {/* 传递参数 */}
-      <Child parentState={state} setParentState={setState} />
+      {/* 父级向子级传递参数 */}
+      <Child parentState={state} setParentState={setState}>
+        <div>组件嵌套的形式亦可传递数据</div>
+        <div>组件嵌套传递的数据可以通过props.children访问到</div>
+      </Child>
     </div>
   );
 };
@@ -517,25 +529,26 @@ const GrandChild = () => {
       <div>Context传送门中出现的是: {parentState}</div>
     </div>
   );
-}
+};
 
 const Child = () => {
   return (
     <div>
-      <hr/>
+      <hr />
       <div>我是Child!!!</div>
-      <hr/>
+      <hr />
       <GrandChild />
     </div>
-
   );
-}
+};
 
 const Parent = () => {
   const [parentState, setParentState] = useState(
-    <span style={{color: 'red'}}>是Parent的状态!!!</span>
+    <span style={{ color: 'red' }}>是Parent的状态!!!</span>,
   );
-  {/* Provider向其所有子元素提供数据 */}
+  {
+    /* Provider向其所有子元素提供数据 */
+  }
   return (
     <Context.Provider value={{ parentState, setParentState }}>
       <div>
@@ -543,12 +556,13 @@ const Parent = () => {
         <Child />
       </div>
     </Context.Provider>
-  )
-}
+  );
+};
 
 export default Parent;
 ```
 
 ## 继续学习
-[React官网](https://reactjs.org/)
-[React技术揭秘](https://react.iamkasong.com/hooks/prepare.html)
+
+[React 官网](https://reactjs.org/)
+[React 技术揭秘](https://react.iamkasong.com/hooks/prepare.html)
