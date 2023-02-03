@@ -1,7 +1,7 @@
 ---
-title: 疑难杂症之解决
+title: 杂项
 nav:
-  title: 疑难杂症之解决
+  title: 杂项
   order: 8
 ---
 

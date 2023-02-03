@@ -1,7 +1,7 @@
 ---
-title: 代码所围绕的人生
+title: 代码人生
 nav:
-  title: 代码所围绕的人生
+  title: 代码人生
   order: 7
 ---
 
