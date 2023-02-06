@@ -11,7 +11,7 @@ React 是一个用于构建用户界面的 JavaScript 库.
 
 为什么选择 React?
 
-因为 React 是 Facebook 团队开发的,高效可靠且,并且提倡 All in JavaScript.
+因为 React 是 Facebook 团队开发的,高效可靠,并且提倡 All in JavaScript.
 
 > 本文旨在零基础速通,深入还需进一步学习.
 
@@ -599,4 +599,3 @@ export default Parent;
 本想继续补充一些关于底层源码相关的进阶内容, 但是笔者对于深入浅出地阐述这部分内容不具有信心, 而且这也超越了本文用于新手教学的作用范围, 所以提供一些优秀资料供读者自行学习.
 
 [React 官网](https://reactjs.org/)
-[React 技术揭秘](https://react.iamkasong.com/hooks/prepare.html)
